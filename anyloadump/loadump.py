@@ -1,9 +1,6 @@
 from enum import Enum
 
-import subprocess
-import os
-import re
-import codecs
+import subprocess, os, re, codecs
 
 class DumpMode(Enum):
     WRITE = "w"
@@ -39,7 +36,8 @@ detect file is binary or not(text).
 may raise CalledProcessError or FileNotFoundError
 """
 def _is_binary(file):
-    stdout = subprocess.run(["file", "--mime", file], stdout=subprocess.PIPE, check=True).stdout.decode('utf-8')
+    commands = ["file", "--mime", file]
+    stdout = subprocess.run(commands, stdout=subprocess.PIPE, check=True).stdout.decode('utf-8')
     m = re.search("charset=(.*)", stdout)
     if m is None: raise CharsetNotInferredError(stdout)
     return True if m.group(1) == "binary" else False
