@@ -15,14 +15,6 @@ class ExtensionNotInferredError(Exception):
     def __str__(self):
         return "extension of file cannot be infered. put proper filename or format."
 
-
-class ExtensionNotFoundError(Exception):
-    def __init__(self, filename):
-        self.filename = filename
-
-    def __str__(self):
-        return "cannot extract file_extension from {}".format(self.filename)
-
 class CharsetNotInferredError(Exception):
     def __init__(self, stdout):
         self.msg = "".join(stdout.split(":")[1:])[1:]
@@ -48,10 +40,7 @@ def _is_binary(file):
 may raise ExtensionNotFoundError
 """
 def _extract_extension(file):
-    try:
-        return os.path.splitext(file)[1][1:]
-    except KeyError:
-        raise ExtensionNotFoundError
+    return os.path.splitext(file)[1][1:]
 
 
 """
