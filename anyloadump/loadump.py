@@ -11,7 +11,7 @@ class DumpMode(Enum):
     EXCLUSIVE_CREATION = "x"
     READ = "r"
 
-class ExtensionInferenceError(Exception):
+class ExtensionNotInferredError(Exception):
     def __init__(self):
         pass
 
@@ -53,7 +53,7 @@ may raise ExtensionInferenceError
 """
 def _invoke(dump_mode: DumpMode, file=None, fmt=None):
     ext = _extract_extension(file) if file else fmt
-    if ext is None: raise ExtensionInferenceError
+    if ext is None: raise ExtensionNotInferredError
     target = _extract_extension(file).__import__(ext)
     # "[load|dump]s?"
     method_mappings = dict(zip(list("rawx"), ["load"] + ["dump"] * 3))
