@@ -63,7 +63,6 @@ def _invoke(dump_mode: DumpMode, file=None, fmt=None):
 generalized [load|dump]s? function
 """
 def loadump(dump_mode: DumpMode, *, obj=None, file=None, fmt = None, encoding=None, errors=None, **kwargs):
-    mode = dump_mode.value + ("b" if _is_binary(file) else "")
 
     kwargs.update(
         dict(
@@ -75,7 +74,9 @@ def loadump(dump_mode: DumpMode, *, obj=None, file=None, fmt = None, encoding=No
     kwargs = {k: v for k, v in kwargs if k is not None}
 
     if file is None:
-        return _invoke(dump_mode=dump_mode, file=file, fmt=fmt)(**kwargs)
+        return _invoke(dump_mode=dump_mode, fmt=fmt)(**kwargs)
     else:
+        if not os.path.exists(file): raise FileNotFoundError
+        mode = dump_mode.value + ("b" if _is_binary(file) else "")
         with codecs.open(file, mode=mode, encoding=encoding, errors=errors) as fp:
             return _invoke(dump_mode=dump_mode, file=file, fmt=fmt)(fp=fp, **kwargs)
