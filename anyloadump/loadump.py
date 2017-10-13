@@ -26,6 +26,13 @@ class ExtensionNotFoundError(Exception):
     def __str__(self):
         return "cannot extract file_extension from {}".format(self.filename)
 
+class CharsetNotInferredError(Exception):
+    def __init__(self, stdout):
+        self.msg = "".join(stdout.split(":")[1:])[1:]
+        pass
+    def __str__(self):
+        return "charset of file cannot be inferred. ERROR msg : {}".format(self.msg)
+
 
 """
 detect file is binary or not(text).
@@ -34,6 +41,7 @@ may raise CalledProcessError or FileNotFoundError
 def _is_binary(file):
     stdout = subprocess.run(["file", "--mime", file], stdout=subprocess.PIPE, check=True).stdout.decode('utf-8')
     m = re.search("charset=(.*)", stdout)
+    if m is None: raise CharsetNotInferredError(stdout)
     return True if m.group(1) == "binary" else False
 
 
