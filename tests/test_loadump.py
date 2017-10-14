@@ -1,4 +1,5 @@
 from anyloadump import loadump
+from anyloadump.loadump import DumpMode
 import unittest
 import os
 import logging
@@ -34,3 +35,81 @@ class LoadumpTests(unittest.TestCase):
         res = loadump._extract_extension(self._get_path("data/sample.pickle"))
         self.assertEqual(res, "pickle")
         self.assertEqual(loadump._extract_extension(self._get_path("data/dummy")), "")
+
+    def test_invoke(self):
+
+        import logging
+        logging.basicConfig(level=logging.ERROR)
+        logging.getLogger("anyloadump.loadump").setLevel(logging.DEBUG)
+        import pickle
+
+        lst = [1,2,3]
+
+        # check if func is json.dump function
+        func = loadump._invoke(
+            dump_mode=DumpMode.WRITE,
+            file = self._get_path("data/sample.json")
+        )
+        self.assertTrue(hasattr(func, '__call__'))
+        self.assertEqual(func.__module__, "json")
+        self.assertEqual(func.__name__, "dump")
+
+        with open(self._get_path("data/out1.json"), "w") as fo:
+            res = func(lst, fo)
+        self.assertIsNone(res)
+
+        # check if func is json.load function
+        func = loadump._invoke(
+            dump_mode=DumpMode.READ,
+            file = self._get_path("data/sample.json")
+        )
+        self.assertTrue(hasattr(func, '__call__'))
+        self.assertEqual(func.__module__, "json")
+        self.assertEqual(func.__name__, "load")
+
+        with open(self._get_path("data/out1.json"), "r") as fi:
+            obj = func(fi)
+        self.assertEqual(lst, obj)
+
+        # check if func is pickle.load function
+        pickle_file = "data/sample.pickle"
+        func = loadump._invoke(
+            dump_mode=DumpMode.READ,
+            file = self._get_path(pickle_file)
+        )
+        self.assertTrue(hasattr(func, '__call__'))
+        self.assertEqual(func.__module__, "_pickle")
+        self.assertEqual(func.__name__, "load")
+
+        with open(self._get_path(pickle_file), "rb") as fi:
+            obj = func(fi)
+        with open(self._get_path(pickle_file), "rb") as fi:
+            obj_cmp = pickle.load(fi)
+        self.assertEqual(obj_cmp, obj)
+
+        # check if func is pickle.dumps function
+        func = loadump._invoke(
+            dump_mode=DumpMode.WRITE,
+            fmt = "pickle"
+        )
+        self.assertTrue(hasattr(func, '__call__'))
+        self.assertEqual(func.__module__, "_pickle")
+        self.assertEqual(func.__name__, "dumps")
+
+        self.assertEqual(func(lst), pickle.dumps(lst))
+
+        # check if res is pickle.loads function
+        func = loadump._invoke(
+            dump_mode=DumpMode.READ,
+            fmt = "pickle"
+        )
+        self.assertTrue(hasattr(func, '__call__'))
+        self.assertEqual(func.__module__, "_pickle")
+        self.assertEqual(func.__name__, "loads")
+
+
+        # check whether ExtensionNotInferredError raises if both file and fmt is None.
+        with self.assertRaises(loadump.ExtensionNotInferredError):
+            loadump._invoke(
+                dump_mode=DumpMode.READ,
+            )
