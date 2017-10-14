@@ -58,13 +58,19 @@ def _invoke(dump_mode: DumpMode, file=None, fmt=None):
 """
 generalized [load|dump]s? function
 """
-def loadump(dump_mode: DumpMode, *, obj=None, file=None, fmt = None, encoding=None, errors=None, **kwargs):
-
+def loadump(dump_mode: DumpMode, *,
+            obj=None, s=None, file=None, fmt = None, encoding=None, errors=None, buffering=None, **kwargs):
+    # load method precedes loads
+    if obj is not None:
+        logger.warning("`obj` & `s` are both None, so `s` is forced to set None")
+        s=None
     kwargs.update(
         dict(
             encoding=encoding,
             errors=errors,
             obj=obj,
+            s=s,
+            buffering=buffering,
         )
     )
     kwargs = {k: v for k, v in kwargs if k is not None}
