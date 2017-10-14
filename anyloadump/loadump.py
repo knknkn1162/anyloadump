@@ -46,33 +46,33 @@ def _extract_extension(file):
 """
 may raise ExtensionInferenceError
 """
-def _invoke(dump_mode: DumpMode, file=None, fmt=None):
-    ext = _extract_extension(file) if file else fmt
+def _invoke(dump_mode: DumpMode, filename=None, fmt=None):
+    ext = _extract_extension(filename) if filename else fmt
     if ext is None: raise ExtensionNotInferredError
     target = importlib.import_module(ext)
-    logger.debug("module : {}".format(target))
     # "[load|dump]s?"
     method_mappings = dict(zip(list("rawx"), ["load"] + ["dump"] * 3))
-    return getattr(target, method_mappings[dump_mode.value] + 's' * (not file))
+    method = getattr(target, method_mappings[dump_mode.value] + 's' * (not filename))
+    logger.debug("module : {}, method : {}".format(target, method))
+    return method
 
 """
 generalized [load|dump]s? function
 """
-def loadump(dump_mode: DumpMode, *, obj=None, file=None, fmt = None, encoding=None, errors=None, **kwargs):
+def loadump(dump_mode: DumpMode, *,
+            obj=None, s=None, filename=None, fmt=None, encoding=None, errors=None, buffering=None, **kwargs):
+    # load method precedes loads
+    if obj is not None:
+        logger.warning("`obj` & `s` are both None, so `s` is forced to set None")
+        s=None
 
-    kwargs.update(
-        dict(
-            encoding=encoding,
-            errors=errors,
-            obj=obj,
-        )
-    )
-    kwargs = {k: v for k, v in kwargs if k is not None}
-
-    if file is None:
-        return _invoke(dump_mode=dump_mode, fmt=fmt)(**kwargs)
+    if filename is None:
+        return _invoke(dump_mode=dump_mode, fmt=fmt)(obj or s, **kwargs)
     else:
-        if not os.path.exists(file): raise FileNotFoundError
-        mode = dump_mode.value + ("b" if _is_binary(file) else "")
-        with codecs.open(file, mode=mode, encoding=encoding, errors=errors) as fp:
-            return _invoke(dump_mode=dump_mode, file=file, fmt=fmt)(fp=fp, **kwargs)
+        if not os.path.exists(filename): raise FileNotFoundError
+        mode = dump_mode.value + "b"*_is_binary(filename)
+        codecs_kwargs = \
+            {k:v for k,v in dict(mode=mode, encoding=encoding, errors=errors, buffering=buffering).items() \
+                if v is not None}
+        with codecs.open(filename=filename, **codecs_kwargs) as fp:
+            return _invoke(dump_mode=dump_mode, filename=filename, fmt=fmt)(fp, **kwargs)

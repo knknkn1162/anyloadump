@@ -48,7 +48,7 @@ class LoadumpTests(unittest.TestCase):
         # check if func is json.dump function
         func = loadump._invoke(
             dump_mode=DumpMode.WRITE,
-            file = self._get_path("data/sample.json")
+            filename = self._get_path("data/sample.json")
         )
         self.assertTrue(hasattr(func, '__call__'))
         self.assertEqual(func.__module__, "json")
@@ -61,7 +61,7 @@ class LoadumpTests(unittest.TestCase):
         # check if func is json.load function
         func = loadump._invoke(
             dump_mode=DumpMode.READ,
-            file = self._get_path("data/sample.json")
+            filename = self._get_path("data/sample.json")
         )
         self.assertTrue(hasattr(func, '__call__'))
         self.assertEqual(func.__module__, "json")
@@ -75,7 +75,7 @@ class LoadumpTests(unittest.TestCase):
         pickle_file = "data/sample.pickle"
         func = loadump._invoke(
             dump_mode=DumpMode.READ,
-            file = self._get_path(pickle_file)
+            filename = self._get_path(pickle_file)
         )
         self.assertTrue(hasattr(func, '__call__'))
         self.assertEqual(func.__module__, "_pickle")
@@ -113,3 +113,7 @@ class LoadumpTests(unittest.TestCase):
             loadump._invoke(
                 dump_mode=DumpMode.READ,
             )
+
+    def test_loadump(self):
+        # generalized function, tests are described in dump or load module.
+        pass
