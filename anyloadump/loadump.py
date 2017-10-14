@@ -28,12 +28,12 @@ class CharsetNotInferredError(Exception):
 
 """
 detect file is binary or not(text).
-may raise CalledProcessError or FileNotFoundError
+may raise CharsetNotInferredError or FileNotFoundError
 """
 def _is_binary(file):
+    if not os.path.exists(file): raise FileNotFoundError(file)
     commands = ["file", "--mime", file]
     stdout = subprocess.run(commands, stdout=subprocess.PIPE, check=True).stdout.decode('utf-8')
-    logger.debug("subprocess.run result : {}".format(stdout))
     m = re.search("charset=(.*)", stdout)
     if m is None: raise CharsetNotInferredError(stdout)
     return True if m.group(1) == "binary" else False
