@@ -66,16 +66,8 @@ def loadump(dump_mode: DumpMode, *,
         logger.warning("`obj` & `s` are both None, so `s` is forced to set None")
         s=None
 
-    kwargs.update(
-        dict(
-            obj=obj,
-            s=s,
-        )
-    )
-    kwargs = {k: v for k, v in kwargs.items() if v is not None}
-
     if filename is None:
-        return _invoke(dump_mode=dump_mode, fmt=fmt)(**kwargs)
+        return _invoke(dump_mode=dump_mode, fmt=fmt)(obj or s, **kwargs)
     else:
         if not os.path.exists(filename): raise FileNotFoundError
         mode = dump_mode.value + "b"*_is_binary(filename)
