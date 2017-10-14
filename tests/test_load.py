@@ -32,3 +32,18 @@ class LoadTests(unittest.TestCase):
             obj = pickle.load(fi)
 
         self.assertEqual(res, obj)
+
+    def test_loads(self):
+        import logging
+        logging.basicConfig(level=logging.ERROR)
+        logging.getLogger("anyloadump.loadump").setLevel(logging.DEBUG)
+        import json, pickle
+
+        sample = [1,2,3]
+        s = json.dumps(sample)
+        res = load.loads(s, fmt="json") # test
+        self.assertEqual(res, sample)
+
+        b = pickle.dumps(sample)
+        res = load.loads(b, fmt="pickle")
+        self.assertEqual(res, sample)
