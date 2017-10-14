@@ -1,7 +1,7 @@
 from enum import Enum
 
 import subprocess, os, re, codecs
-import logging
+import logging, importlib
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +49,8 @@ may raise ExtensionInferenceError
 def _invoke(dump_mode: DumpMode, file=None, fmt=None):
     ext = _extract_extension(file) if file else fmt
     if ext is None: raise ExtensionNotInferredError
-    target = _extract_extension(file).__import__(ext)
+    target = importlib.import_module(ext)
+    logger.debug("module : {}".format(target))
     # "[load|dump]s?"
     method_mappings = dict(zip(list("rawx"), ["load"] + ["dump"] * 3))
     return getattr(target, method_mappings[dump_mode.value] + 's' * (not file))
