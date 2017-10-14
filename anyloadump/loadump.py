@@ -77,7 +77,10 @@ def loadump(dump_mode: DumpMode, *,
     if filename is None:
         return _invoke(dump_mode=dump_mode, fmt=fmt)(**kwargs)
     else:
-        if not os.path.exists(file): raise FileNotFoundError
-        mode = dump_mode.value + ("b" if _is_binary(file) else "")
-        with codecs.open(file, mode=mode, encoding=encoding, errors=errors) as fp:
-            return _invoke(dump_mode=dump_mode, file=file, fmt=fmt)(fp=fp, **kwargs)
+        if not os.path.exists(filename): raise FileNotFoundError
+        mode = dump_mode.value + "b"*_is_binary(filename)
+        codecs_kwargs = \
+            {k:v for k,v in dict(mode=mode, encoding=encoding, errors=errors, buffering=buffering).items() \
+                if v is not None}
+        with codecs.open(filename=filename, **codecs_kwargs) as fp:
+            return _invoke(dump_mode=dump_mode, filename=filename, fmt=fmt)(fp, **kwargs)
