@@ -1,25 +1,25 @@
 from .loadump import loadump, DumpMode
 
-def dump(obj, file, *, encoding=None, errors=None, buffering=None, **kwargs):
-    return loadump(obj=obj, dump_mode=DumpMode.WRITE, file=file,
+def dump(obj, filename, *, encoding=None, errors=None, buffering=None, **kwargs):
+    return loadump(obj=obj, dump_mode=DumpMode.WRITE, filename=filename,
                    encoding=encoding, errors=errors, buffering=buffering, **kwargs)
 
 def adump(obj, file, *, encoding=None, errors=None, buffering=None, **kwargs):
     return loadump(
         obj=obj,
         dump_mode=DumpMode.APPEND,
-        file=file,
+        filename=file,
         encoding=encoding,
         errors=errors,
         buffering=buffering,
         **kwargs
     )
 
-def xdump(obj, file, *, encoding=None, errors=None, buffering=None, **kwargs):
+def xdump(obj, filename, *, encoding=None, errors=None, buffering=None, **kwargs):
     return loadump(
         obj=obj,
         dump_mode=DumpMode.EXCLUSIVE_CREATION,
-        file=file,
+        filename=filename,
         encoding=encoding,
         errors=errors,
         buffering=buffering,
