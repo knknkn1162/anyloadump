@@ -46,8 +46,8 @@ def _extract_extension(file):
 """
 may raise ExtensionInferenceError
 """
-def _invoke(dump_mode: DumpMode, file=None, fmt=None):
-    ext = _extract_extension(file) if file else fmt
+def _invoke(dump_mode: DumpMode, filename=None, fmt=None):
+    ext = _extract_extension(filename) if filename else fmt
     if ext is None: raise ExtensionNotInferredError
     target = importlib.import_module(ext)
     logger.debug("module : {}".format(target))
@@ -59,11 +59,12 @@ def _invoke(dump_mode: DumpMode, file=None, fmt=None):
 generalized [load|dump]s? function
 """
 def loadump(dump_mode: DumpMode, *,
-            obj=None, s=None, file=None, fmt = None, encoding=None, errors=None, buffering=None, **kwargs):
+            obj=None, s=None, filename=None, fmt=None, encoding=None, errors=None, buffering=None, **kwargs):
     # load method precedes loads
     if obj is not None:
         logger.warning("`obj` & `s` are both None, so `s` is forced to set None")
         s=None
+
     kwargs.update(
         dict(
             encoding=encoding,
@@ -75,7 +76,7 @@ def loadump(dump_mode: DumpMode, *,
     )
     kwargs = {k: v for k, v in kwargs if k is not None}
 
-    if file is None:
+    if filename is None:
         return _invoke(dump_mode=dump_mode, fmt=fmt)(**kwargs)
     else:
         if not os.path.exists(file): raise FileNotFoundError
