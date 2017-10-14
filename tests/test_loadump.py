@@ -113,3 +113,7 @@ class LoadumpTests(unittest.TestCase):
             loadump._invoke(
                 dump_mode=DumpMode.READ,
             )
+
+    def test_loadump(self):
+        # generalized function, tests are described in dump or load module.
+        pass
