@@ -21,7 +21,7 @@ class LoadumpTests(unittest.TestCase):
         # for travis ci
         import subprocess
         try:
-            subprocess.run(commands = ["file", "--mime", "."], stdout=subprocess.PIPE, check=True)
+            subprocess.run(["file", "--mime", "."], stdout=subprocess.PIPE, check=True)
         except subprocess.CalledProcessError as err:
             logger.debug("{}".format(err))
             return
