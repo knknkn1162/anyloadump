@@ -1,6 +1,9 @@
 from anyloadump import loadump
 import unittest
 import os
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class LoadumpTests(unittest.TestCase):
@@ -12,7 +15,16 @@ class LoadumpTests(unittest.TestCase):
         import logging
         logging.basicConfig(level=logging.ERROR)
 
-        logging.getLogger("anyloadump.loadump").setLevel(logging.DEBUG)
+        for module in ["anyloadump.loadump", "tests.test_loadump"]:
+            logging.getLogger(module).setLevel(logging.DEBUG)
+
+        # for travis ci
+        import subprocess
+        try:
+            subprocess.run(commands = ["file", "--mime", "."], stdout=subprocess.PIPE, check=True)
+        except subprocess.CalledProcessError as err:
+            logger.debug("{}".format(err))
+            return
 
         res = loadump._is_binary(self._get_path("data/sample.json"))
         self.assertFalse(res)
