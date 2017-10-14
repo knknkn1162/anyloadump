@@ -1,6 +1,9 @@
 from enum import Enum
 
 import subprocess, os, re, codecs
+import logging
+
+logger = logging.getLogger(__name__)
 
 class DumpMode(Enum):
     WRITE = "w"
@@ -30,15 +33,12 @@ may raise CalledProcessError or FileNotFoundError
 def _is_binary(file):
     commands = ["file", "--mime", file]
     stdout = subprocess.run(commands, stdout=subprocess.PIPE, check=True).stdout.decode('utf-8')
+    logger.debug("subprocess.run result : {}".format(stdout))
     m = re.search("charset=(.*)", stdout)
     if m is None: raise CharsetNotInferredError(stdout)
     return True if m.group(1) == "binary" else False
 
 
-
-"""
-may raise ExtensionNotFoundError
-"""
 def _extract_extension(file):
     return os.path.splitext(file)[1][1:]
 
