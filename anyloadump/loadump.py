@@ -50,10 +50,11 @@ def _invoke(dump_mode: DumpMode, filename=None, fmt=None):
     ext = _extract_extension(filename) if filename else fmt
     if ext is None: raise ExtensionNotInferredError
     target = importlib.import_module(ext)
-    logger.debug("module : {}".format(target))
     # "[load|dump]s?"
     method_mappings = dict(zip(list("rawx"), ["load"] + ["dump"] * 3))
-    return getattr(target, method_mappings[dump_mode.value] + 's' * (not file))
+    method = getattr(target, method_mappings[dump_mode.value] + 's' * (not filename))
+    logger.debug("module : {}, method : {}".format(target, method))
+    return method
 
 """
 generalized [load|dump]s? function
