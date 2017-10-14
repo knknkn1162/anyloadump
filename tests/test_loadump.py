@@ -18,22 +18,13 @@ class LoadumpTests(unittest.TestCase):
         for module in ["anyloadump.loadump", "tests.test_loadump"]:
             logging.getLogger(module).setLevel(logging.DEBUG)
 
-        # for travis ci
-        import subprocess
-        try:
-            subprocess.run(["file", "--mime", "."], stdout=subprocess.PIPE, check=True)
-        except subprocess.CalledProcessError as err:
-            logger.debug("{}".format(err))
-            return
-
         res = loadump._is_binary(self._get_path("data/sample.json"))
         self.assertFalse(res)
 
         res = loadump._is_binary(self._get_path("data/sample.pickle"))
         self.assertTrue(res)
 
-        # ./data/dummy.pickle: cannot open `./data/dummy.pickle' (No such file or directory)
-        with self.assertRaises(loadump.CharsetNotInferredError):
+        with self.assertRaises(FileNotFoundError):
             loadump._is_binary(self._get_path("data/dummy.pickle"))
 
 
