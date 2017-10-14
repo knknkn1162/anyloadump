@@ -68,14 +68,11 @@ def loadump(dump_mode: DumpMode, *,
 
     kwargs.update(
         dict(
-            encoding=encoding,
-            errors=errors,
             obj=obj,
             s=s,
-            buffering=buffering,
         )
     )
-    kwargs = {k: v for k, v in kwargs if k is not None}
+    kwargs = {k: v for k, v in kwargs.items() if v is not None}
 
     if filename is None:
         return _invoke(dump_mode=dump_mode, fmt=fmt)(**kwargs)
