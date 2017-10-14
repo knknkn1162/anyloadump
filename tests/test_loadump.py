@@ -21,10 +21,9 @@ class LoadumpTests(unittest.TestCase):
         self.assertTrue(res)
 
         # ./data/dummy.pickle: cannot open `./data/dummy.pickle' (No such file or directory)
-        self.assertRaises(
-            loadump.CharsetNotInferredError,
-            lambda: loadump._is_binary(self._get_path("data/dummy.pickle"))
-        )
+        with self.assertRaises(loadump.CharsetNotInferredError):
+            loadump._is_binary(self._get_path("data/dummy.pickle"))
+
 
     def test_extract_extension(self):
         res = loadump._extract_extension(self._get_path("data/sample.json"))
