@@ -1,5 +1,5 @@
 import unittest
-from anyloadump import dump
+import anyloadump as ald
 import os
 
 class DumpTests(unittest.TestCase):
@@ -14,7 +14,7 @@ class DumpTests(unittest.TestCase):
 
         # test json-format
         json_file = self._get_path("data/out.json")
-        dump.dump(lst, self._get_path(json_file))
+        ald.dump(lst, self._get_path(json_file))
         ## confirm
         with open(json_file, "r") as fi:
             obj = json.load(fi)
@@ -23,7 +23,7 @@ class DumpTests(unittest.TestCase):
         # test pickle-format
         pickle_file = self._get_path("data/out.pickle")
 
-        dump.dump(lst, self._get_path(pickle_file))
+        ald.dump(lst, self._get_path(pickle_file))
         with open(pickle_file, "rb") as fi:
             obj = pickle.load(fi)
         self.assertEqual(lst, obj)
@@ -35,13 +35,13 @@ class DumpTests(unittest.TestCase):
         lst = [1,2,3]
 
         # test json-format
-        s = dump.dumps(lst, fmt="json")
+        s = ald.dumps(lst, fmt="json")
         ## confirm
         obj = json.loads(s)
         self.assertEqual(lst, obj)
 
         # test pickle-format
-        s = dump.dumps(lst, "pickle")
+        s = ald.dumps(lst, "pickle")
         ## confirm
         obj = pickle.loads(s)
         self.assertEqual(lst, obj)
