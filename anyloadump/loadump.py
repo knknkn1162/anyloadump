@@ -59,38 +59,37 @@ class Loadumper():
         return os.path.splitext(file)[1][1:]
 
 
+    """
+    may raise ExtensionInferenceError
+    """
+    @staticmethod
+    def _invoke(dump_mode: DumpMode, filename=None, fmt=None):
+        ext = Loadumper._extract_extension(filename) if filename else fmt
+        if ext is None: raise ExtensionNotInferredError
+        target = importlib.import_module(ext)
+        # "[load|dump]s?"
+        method_mappings = dict(zip(list("rawx"), ["load"] + ["dump"] * 3))
+        method = getattr(target, method_mappings[dump_mode.value] + 's' * (not filename))
+        logger.debug("module : {}, method : {}".format(target, method))
+        return method
 
-"""
-may raise ExtensionInferenceError
-"""
-def _invoke(dump_mode: DumpMode, filename=None, fmt=None):
-    ext = _extract_extension(filename) if filename else fmt
-    if ext is None: raise ExtensionNotInferredError
-    target = importlib.import_module(ext)
-    # "[load|dump]s?"
-    method_mappings = dict(zip(list("rawx"), ["load"] + ["dump"] * 3))
-    method = getattr(target, method_mappings[dump_mode.value] + 's' * (not filename))
-    logger.debug("module : {}, method : {}".format(target, method))
-    return method
+    """
+    generalized [load|dump]s? function
+    """
+    def loadump(self, dump_mode: DumpMode, *,
+                obj=None, s=None, filename=None, fmt=None, encoding=None, errors=None, buffering=None, **kwargs):
+        # load method precedes loads
+        if obj is not None:
+            if s is not None:
+                logger.warning("`obj` & `s` are both not-None, so `s` is forced to set None")
+                s=None
 
-"""
-generalized [load|dump]s? function
-"""
-def loadump(dump_mode: DumpMode, *,
-            obj=None, s=None, filename=None, fmt=None, encoding=None, errors=None, buffering=None, **kwargs):
-    # load method precedes loads
-    if obj is not None:
-        if s is not None:
-            logger.warning("`obj` & `s` are both not-None, so `s` is forced to set None")
-            s=None
-
-    if filename is None:
-        return _invoke(dump_mode=dump_mode, fmt=fmt)(obj or s, **kwargs)
-    else:
-        if not os.path.exists(filename): raise FileNotFoundError
-        mode = dump_mode.value + "b"*_is_binary(filename)
-        codecs_kwargs = \
-            {k:v for k,v in dict(mode=mode, encoding=encoding, errors=errors, buffering=buffering).items() \
-                if v is not None}
-        with codecs.open(filename=filename, **codecs_kwargs) as fp:
-            return _invoke(dump_mode=dump_mode, filename=filename, fmt=fmt)(fp, **kwargs)
+        if filename is None:
+            return self._invoke(dump_mode=dump_mode, fmt=fmt)(obj or s, **kwargs)
+        else:
+            mode = dump_mode.value + "b"*self._is_binary(filename)
+            codecs_kwargs = \
+                {k:v for k,v in dict(mode=mode, encoding=encoding, errors=errors, buffering=buffering).items() \
+                    if v is not None}
+            with codecs.open(filename=filename, **codecs_kwargs) as fp:
+                return self._invoke(dump_mode=dump_mode, filename=filename, fmt=fmt)(fp, **kwargs)
