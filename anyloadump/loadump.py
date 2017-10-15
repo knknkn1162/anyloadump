@@ -4,6 +4,7 @@ import subprocess, os, re, codecs
 import logging, importlib
 
 logger = logging.getLogger(__name__)
+SAMPLE_OBJ = [1,2,3]
 
 class DumpMode(Enum):
     WRITE = "w"
@@ -26,17 +27,30 @@ class CharsetNotInferredError(Exception):
         return "charset of file cannot be inferred. ERROR msg : {}".format(self.msg)
 
 
-"""
-detect file is binary or not(text).
-may raise CharsetNotInferredError or FileNotFoundError
-"""
-def _is_binary(file):
-    if not os.path.exists(file): raise FileNotFoundError(file)
-    commands = ["file", "--mime", file]
-    stdout = subprocess.run(commands, stdout=subprocess.PIPE, check=True).stdout.decode('utf-8')
-    m = re.search("charset=(.*)", stdout)
-    if m is None: raise CharsetNotInferredError(stdout)
-    return True if m.group(1) == "binary" else False
+    def __init__(self, tbs):
+        self.tb_mapping.update(tbs)
+    """
+    detect file is binary or not(text).
+    may raise CharsetNotInferredError
+    """
+    def _is_binary(self, filename):
+        ext = self._extract_extension(filename)
+        res = self.tb_mapping.get(ext)
+        if res is not None: return res
+        if os.path.exists(filename):
+            commands = ["file", "--mime", filename]
+            stdout = subprocess.run(commands, stdout=subprocess.PIPE, check=True).stdout.decode('utf-8')
+            m = re.search("charset=(.*)", stdout)
+            if m is None: raise CharsetNotInferredError(stdout)
+            return True if m.group(1) == "binary" else False
+        else: # if mode is write or append or exclusive creation.
+            if ext == "": return False # assume text-mode.
+            try:
+                return isinstance(importlib.import_module(ext).dumps(SAMPLE_OBJ), bytes)
+            except AttributeError:
+                raise CharsetNotInferredError(
+                    "{} module has no dumps method to analyze bynary or text".format()
+                )
 
 
 def _extract_extension(file):
