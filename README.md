@@ -4,11 +4,11 @@
 [![Coverage Status](https://coveralls.io/repos/github/knknkn1162/anyloadump/badge.svg?branch=dev)](https://coveralls.io/github/knknkn1162/anyloadump?branch=dev)
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
 
-The Python library anyloadump (ald) unifies `load(s)` or `dump(s)` method in various file formats (e.g. json, pickle, yaml, toml..) with importing modules dynamically.
+The Python library anyloadump helps to briefly load a file or dump to a file in various file formats (e.g. json, pickle, yaml, toml..) with importing modules dynamically.
 
 ## Motivation
 
-When the multiple types of file are loaded or dumped, boilerplate code will be generated and scattered as follows:
+If the multiple types of file are loaded or dumped, boilerplate code will be generated and scattered as follows:
 
 ```python
 import json, pickle
@@ -36,7 +36,7 @@ This code goes against DRY(Don't repeat yourself) principle. Let's apply DRY in 
     get_module().dump(obj, fp)
  ```
  
-Anyloadump helps to briefly load file or dump to a file in various file types, and provides dump/load/dumps/loads method like [uiri/toml](https://github.com/uiri/toml).
+Anyloadump helps to briefly load a file or dump to a file in various file types, and provides dump/load/dumps/loads method like [uiri/toml](https://github.com/uiri/toml).
 
 ## Installation
 
@@ -56,10 +56,11 @@ import anyloadump as ald
 json_file = "sample.json"
 obj = ald.load(json_file)
 
+# binary file can be also loaded properly. 
 pickle_file = "sample.pickle"
 obj = ald.load(pickle_file)
 
-# external library. pip install pyyaml inadvance
+# use library from PyPI. `pip install pyyaml` in advance.
 yaml_file = "sample.yaml"
 obj = ald.load(yaml_file)
 
@@ -73,10 +74,33 @@ obj = ald.load(yaml_file, default_flow_style=False, allow_unicode=True)
 
 # ---
 
+# obj = ...
 # Of course, you can use dump method likewise:
 json_file = "sample.json"
-obj = ald.dump(json_file)
+ald.dump(obj, json_file)
+
+# binary file can be also loaded properly. 
+pickle_file = "sample.pickle"
+ald.load(obj, pickle_file)
+
+# when use loads/dumps, fmt argument is required
+ald.dumps(obj, fmt="json")
 ```
+
+## Requirements
+
+Anyloadump makes use of the art of duck typing to modules, so the imported module meets a few requirements and options:
+
+1. `load(fp, **kwargs)` # fp : file object.
+2. `dump(obj, fp, **kwargs)` # obj : Python object, fp : file object
+3. (Optional) `loads(s, **kwargs)` # serialized bytes or strs
+4, (Optional) `dumps(obj, **kwargs)` # obj : Python object
+
+Note that argument names (obj, fp) are arbitrary.
+
+For instance, `json, pickle, toml` modules have 1\~4 respectively. By contrast `pyyaml` library has only 1\~2.
+If you run `anyloadump.loads("sample.yaml")`, CharsetNotInferredError is raised. 
+
 
 
 ## Note
