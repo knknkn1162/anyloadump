@@ -8,8 +8,28 @@ class DumpTests(unittest.TestCase):
         return os.path.join(root_dir, file)
 
     def test_dump(self):
-        self.assertTrue(False)
+        import json, pickle
+
+        lst = [1,2,3]
+
+        # test json-format
+        json_file = "data/out.json"
+        dump.dump(lst, self._get_path(json_file))
+        ## confirm
+        with open(json_file, "r") as fi:
+            obj = json.load(fi)
+        self.assertEqual(lst, obj)
+
+        # test pickle-format
+        pickle_file = "data/out.pickle"
+
+        dump.dump(lst, self._get_path(pickle_file))
+        with open(pickle_file, "rb") as fi:
+            obj = pickle.load(fi)
+        self.assertEqual(lst, obj)
+
 
     def test_dumps(self):
         self.assertTrue(False)
+
 
