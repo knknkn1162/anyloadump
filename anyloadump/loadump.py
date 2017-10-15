@@ -26,6 +26,8 @@ class CharsetNotInferredError(Exception):
     def __str__(self):
         return "charset of file cannot be inferred. ERROR msg : {}".format(self.msg)
 
+class Loadumper():
+    tb_mapping = {"json": False, "pickle": True, "yaml": False, "toml": False}
 
     def __init__(self, tbs):
         self.tb_mapping.update(tbs)
@@ -52,9 +54,10 @@ class CharsetNotInferredError(Exception):
                     "{} module has no dumps method to analyze bynary or text".format()
                 )
 
+    @staticmethod
+    def _extract_extension(file):
+        return os.path.splitext(file)[1][1:]
 
-def _extract_extension(file):
-    return os.path.splitext(file)[1][1:]
 
 
 """
