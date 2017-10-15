@@ -1,5 +1,5 @@
 import unittest
-from anyloadump import load
+import anyloadump as ald
 import os
 
 class LoadTests(unittest.TestCase):
@@ -16,7 +16,7 @@ class LoadTests(unittest.TestCase):
 
         # test text_file(json)
         json_file = self._get_path("data/sample.json")
-        res = load.load(json_file)
+        res = ald.load(json_file)
 
         with open(json_file, "r") as fi:
             obj = json.load(fi)
@@ -24,7 +24,7 @@ class LoadTests(unittest.TestCase):
 
         # test binary_file(pickle)
         pickle_file = self._get_path("data/sample.pickle")
-        res = load.load(
+        res = ald.load(
             filename=pickle_file,
         )
 
@@ -41,9 +41,9 @@ class LoadTests(unittest.TestCase):
 
         sample = [1,2,3]
         s = json.dumps(sample)
-        res = load.loads(s, fmt="json") # test
+        res = ald.loads(s, fmt="json") # test
         self.assertEqual(res, sample)
 
         b = pickle.dumps(sample)
-        res = load.loads(b, fmt="pickle")
+        res = ald.loads(b, fmt="pickle")
         self.assertEqual(res, sample)
