@@ -1,5 +1,5 @@
 from anyloadump import loadump
-from anyloadump.loadump import Loadumper, DumpMode
+from anyloadump.loadump import Loadumper, OpenMode
 import unittest
 import os
 import logging
@@ -55,7 +55,7 @@ class LoadumpTests(unittest.TestCase):
 
         # check if func is json.dump function
         func = Loadumper._invoke(
-            dump_mode=DumpMode.WRITE,
+            open_mode=OpenMode.WRITE,
             filename = self._get_path("data/sample.json")
         )
         self.assertTrue(hasattr(func, '__call__'))
@@ -68,7 +68,7 @@ class LoadumpTests(unittest.TestCase):
 
         # check if func is json.load function
         func = Loadumper._invoke(
-            dump_mode=DumpMode.READ,
+            open_mode=OpenMode.READ,
             filename = self._get_path("data/sample.json")
         )
         self.assertTrue(hasattr(func, '__call__'))
@@ -82,7 +82,7 @@ class LoadumpTests(unittest.TestCase):
         # check if func is pickle.load function
         pickle_file = "data/sample.pickle"
         func = Loadumper._invoke(
-            dump_mode=DumpMode.READ,
+            open_mode=OpenMode.READ,
             filename = self._get_path(pickle_file)
         )
         self.assertTrue(hasattr(func, '__call__'))
@@ -97,7 +97,7 @@ class LoadumpTests(unittest.TestCase):
 
         # check if func is pickle.dumps function
         func = Loadumper._invoke(
-            dump_mode=DumpMode.WRITE,
+            open_mode=OpenMode.WRITE,
             fmt = "pickle"
         )
         self.assertTrue(hasattr(func, '__call__'))
@@ -108,7 +108,7 @@ class LoadumpTests(unittest.TestCase):
 
         # check if res is pickle.loads function
         func = Loadumper._invoke(
-            dump_mode=DumpMode.READ,
+            open_mode=OpenMode.READ,
             fmt = "pickle"
         )
         self.assertTrue(hasattr(func, '__call__'))
@@ -119,7 +119,7 @@ class LoadumpTests(unittest.TestCase):
         # check whether ExtensionNotInferredError raises if both file and fmt is None.
         with self.assertRaises(loadump.ExtensionNotInferredError):
             Loadumper._invoke(
-                dump_mode=DumpMode.READ,
+                open_mode=OpenMode.READ,
             )
 
     def test_loadump(self):
