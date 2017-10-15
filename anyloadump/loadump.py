@@ -63,8 +63,9 @@ def loadump(dump_mode: DumpMode, *,
             obj=None, s=None, filename=None, fmt=None, encoding=None, errors=None, buffering=None, **kwargs):
     # load method precedes loads
     if obj is not None:
-        logger.warning("`obj` & `s` are both None, so `s` is forced to set None")
-        s=None
+        if s is not None:
+            logger.warning("`obj` & `s` are both not-None, so `s` is forced to set None")
+            s=None
 
     if filename is None:
         return _invoke(dump_mode=dump_mode, fmt=fmt)(obj or s, **kwargs)
