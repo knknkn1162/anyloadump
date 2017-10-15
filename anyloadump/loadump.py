@@ -52,7 +52,7 @@ class Loadumper():
                 return isinstance(importlib.import_module(ext).dumps(SAMPLE_OBJ), bytes)
             except AttributeError:
                 raise CharsetNotInferredError(
-                    "{} module has no dumps method to analyze bynary or text".format()
+                    "{} module has no dumps method to analyze binary or text".format(ext)
                 )
 
     @staticmethod
