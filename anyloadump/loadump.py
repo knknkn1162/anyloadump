@@ -84,7 +84,6 @@ class Loadumper():
             if s is not None:
                 logger.warning("`obj` & `s` are both not-None, so `s` is forced to set None")
                 s=None
-
         if filename is None:
             return self._invoke(dump_mode=dump_mode, fmt=fmt)(obj or s, **kwargs)
         else:
@@ -93,4 +92,6 @@ class Loadumper():
                 {k:v for k,v in dict(mode=mode, encoding=encoding, errors=errors, buffering=buffering).items() \
                     if v is not None}
             with codecs.open(filename=filename, **codecs_kwargs) as fp:
-                return self._invoke(dump_mode=dump_mode, filename=filename, fmt=fmt)(fp, **kwargs)
+                args = (fp) if dump_mode == DumpMode.READ else (obj, fp)
+                return self._invoke(dump_mode=dump_mode, filename=filename, fmt=fmt)(*args, **kwargs)
+
