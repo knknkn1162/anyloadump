@@ -6,7 +6,7 @@ import logging, importlib
 logger = logging.getLogger(__name__)
 SAMPLE_OBJ = [1,2,3]
 
-class DumpMode(Enum):
+class OpenMode(Enum):
     WRITE = "w"
     APPEND = "a"
     EXCLUSIVE_CREATION = "x"
@@ -64,20 +64,20 @@ class Loadumper():
     may raise ExtensionInferenceError
     """
     @staticmethod
-    def _invoke(dump_mode: DumpMode, filename=None, fmt=None):
+    def _invoke(open_mode: OpenMode, filename=None, fmt=None):
         ext = Loadumper._extract_extension(filename) if filename else fmt
         if ext is None: raise ExtensionNotInferredError
         target = importlib.import_module(ext)
         # "[load|dump]s?"
         method_mappings = dict(zip(list("rawx"), ["load"] + ["dump"] * 3))
-        method = getattr(target, method_mappings[dump_mode.value] + 's' * (not filename))
+        method = getattr(target, method_mappings[open_mode.value] + 's' * (not filename))
         logger.debug("module : {}, method : {}".format(target, method))
         return method
 
     """
     generalized [load|dump]s? function
     """
-    def loadump(self, dump_mode: DumpMode, *,
+    def loadump(self, open_mode: OpenMode, *,
                 obj=None, s=None, filename=None, fmt=None, encoding=None, errors=None, buffering=None, **kwargs):
         # load method precedes loads
         if obj is not None:
@@ -85,13 +85,13 @@ class Loadumper():
                 logger.warning("`obj` & `s` are both not-None, so `s` is forced to set None")
                 s=None
         if filename is None:
-            return self._invoke(dump_mode=dump_mode, fmt=fmt)(obj or s, **kwargs)
+            return self._invoke(open_mode=open_mode, fmt=fmt)(obj or s, **kwargs)
         else:
-            mode = dump_mode.value + "b"*self._is_binary(filename)
+            mode = open_mode.value + "b"*self._is_binary(filename)
             codecs_kwargs = \
                 {k:v for k,v in dict(mode=mode, encoding=encoding, errors=errors, buffering=buffering).items() \
                     if v is not None}
             with codecs.open(filename=filename, **codecs_kwargs) as fp:
-                args = (fp,) if dump_mode == DumpMode.READ else (obj, fp)
-                return self._invoke(dump_mode=dump_mode, filename=filename, fmt=fmt)(*args, **kwargs)
+                args = (fp,) if open_mode == OpenMode.READ else (obj, fp)
+                return self._invoke(open_mode=open_mode, filename=filename, fmt=fmt)(*args, **kwargs)
 

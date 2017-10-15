@@ -47,14 +47,14 @@ class DumpTests(unittest.TestCase):
         self.assertEqual(lst, obj)
 
 
-    ## -----almost same as dump.dump method except for dump_mode -----#
+    ## -----almost same as dump.dump method except for open_mode -----#
     def test_xdump(self):
         pass
 
     def test_adump(self):
         pass
 
-    ## ------almost same as dump.dumps method except for dump_mode -----#
+    ## ------almost same as dump.dumps method except for open_mode -----#
     def test_xdumps(self):
         pass
 
