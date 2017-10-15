@@ -1,5 +1,5 @@
 from anyloadump import loadump
-from anyloadump.loadump import DumpMode
+from anyloadump.loadump import Loadumper, DumpMode
 import unittest
 import os
 import logging
@@ -18,23 +18,31 @@ class LoadumpTests(unittest.TestCase):
 
         for module in ["anyloadump.loadump", "tests.test_loadump"]:
             logging.getLogger(module).setLevel(logging.DEBUG)
-
-        res = loadump._is_binary(self._get_path("data/sample.json"))
+        ld = Loadumper()
+        res = ld._is_binary(self._get_path("data/sample.json"))
         self.assertFalse(res)
 
-        res = loadump._is_binary(self._get_path("data/sample.pickle"))
+        res = ld._is_binary(self._get_path("data/sample.pickle"))
         self.assertTrue(res)
 
-        with self.assertRaises(FileNotFoundError):
-            loadump._is_binary(self._get_path("data/dummy.pickle"))
+        res = ld._is_binary(self._get_path("data/dummy.pickle"))
+        self.assertTrue(res)
+
+        import sys
+        # ModuleNotFoundError is new in python3.6. otherwise assume to be raised ImportError
+        with self.assertRaises(ModuleNotFoundError if sys.version_info.minor>=6 else ImportError):
+            ld._is_binary(self._get_path("data/dummy.dummy"))
+
+        with self.assertRaises(loadump.CharsetNotInferredError):
+            ld._is_binary(self._get_path("data/dummy.os"))
 
 
     def test_extract_extension(self):
-        res = loadump._extract_extension(self._get_path("data/sample.json"))
+        res = Loadumper._extract_extension(self._get_path("data/sample.json"))
         self.assertEqual(res, "json")
-        res = loadump._extract_extension(self._get_path("data/sample.pickle"))
+        res = Loadumper._extract_extension(self._get_path("data/sample.pickle"))
         self.assertEqual(res, "pickle")
-        self.assertEqual(loadump._extract_extension(self._get_path("data/dummy")), "")
+        self.assertEqual(Loadumper._extract_extension(self._get_path("data/dummy")), "")
 
     def test_invoke(self):
 
@@ -46,7 +54,7 @@ class LoadumpTests(unittest.TestCase):
         lst = [1,2,3]
 
         # check if func is json.dump function
-        func = loadump._invoke(
+        func = Loadumper._invoke(
             dump_mode=DumpMode.WRITE,
             filename = self._get_path("data/sample.json")
         )
@@ -59,7 +67,7 @@ class LoadumpTests(unittest.TestCase):
         self.assertIsNone(res)
 
         # check if func is json.load function
-        func = loadump._invoke(
+        func = Loadumper._invoke(
             dump_mode=DumpMode.READ,
             filename = self._get_path("data/sample.json")
         )
@@ -73,7 +81,7 @@ class LoadumpTests(unittest.TestCase):
 
         # check if func is pickle.load function
         pickle_file = "data/sample.pickle"
-        func = loadump._invoke(
+        func = Loadumper._invoke(
             dump_mode=DumpMode.READ,
             filename = self._get_path(pickle_file)
         )
@@ -88,7 +96,7 @@ class LoadumpTests(unittest.TestCase):
         self.assertEqual(obj_cmp, obj)
 
         # check if func is pickle.dumps function
-        func = loadump._invoke(
+        func = Loadumper._invoke(
             dump_mode=DumpMode.WRITE,
             fmt = "pickle"
         )
@@ -99,7 +107,7 @@ class LoadumpTests(unittest.TestCase):
         self.assertEqual(func(lst), pickle.dumps(lst))
 
         # check if res is pickle.loads function
-        func = loadump._invoke(
+        func = Loadumper._invoke(
             dump_mode=DumpMode.READ,
             fmt = "pickle"
         )
@@ -110,7 +118,7 @@ class LoadumpTests(unittest.TestCase):
 
         # check whether ExtensionNotInferredError raises if both file and fmt is None.
         with self.assertRaises(loadump.ExtensionNotInferredError):
-            loadump._invoke(
+            Loadumper._invoke(
                 dump_mode=DumpMode.READ,
             )
 
