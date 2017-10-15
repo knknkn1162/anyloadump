@@ -29,7 +29,8 @@ class CharsetNotInferredError(Exception):
 class Loadumper():
     tb_mapping = {"json": False, "pickle": True, "yaml": False, "toml": False}
 
-    def __init__(self, tbs):
+    def __init__(self, tbs=None):
+        tbs = tbs or {}
         self.tb_mapping.update(tbs)
     """
     detect file is binary or not(text).

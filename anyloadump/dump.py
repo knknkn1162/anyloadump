@@ -1,11 +1,13 @@
-from .loadump import loadump, DumpMode
+from .loadump import Loadumper, DumpMode
 
-def dump(obj, filename, *, encoding=None, errors=None, buffering=None, **kwargs):
-    return loadump(obj=obj, dump_mode=DumpMode.WRITE, filename=filename,
+def dump(obj, filename, *, encoding=None, errors=None, buffering=None, tbs=None, **kwargs):
+    ld = Loadumper(tbs)
+    return ld.loadump(obj=obj, dump_mode=DumpMode.WRITE, filename=filename,
                    encoding=encoding, errors=errors, buffering=buffering, **kwargs)
 
-def adump(obj, file, *, encoding=None, errors=None, buffering=None, **kwargs):
-    return loadump(
+def adump(obj, file, *, encoding=None, errors=None, buffering=None, tbs=None, **kwargs):
+    ld = Loadumper(tbs)
+    return ld.loadump(
         obj=obj,
         dump_mode=DumpMode.APPEND,
         filename=file,
@@ -15,8 +17,9 @@ def adump(obj, file, *, encoding=None, errors=None, buffering=None, **kwargs):
         **kwargs
     )
 
-def xdump(obj, filename, *, encoding=None, errors=None, buffering=None, **kwargs):
-    return loadump(
+def xdump(obj, filename, *, encoding=None, errors=None, buffering=None, tbs=None, **kwargs):
+    ld = Loadumper(tbs)
+    return ld.loadump(
         obj=obj,
         dump_mode=DumpMode.EXCLUSIVE_CREATION,
         filename=filename,
@@ -26,14 +29,17 @@ def xdump(obj, filename, *, encoding=None, errors=None, buffering=None, **kwargs
         **kwargs
     )
 
-def dumps(obj, *, encoding=None, errors=None, buffering=None, **kwargs):
-    return loadump(obj=obj, dump_mode=DumpMode.WRITE,
+def dumps(obj, *, encoding=None, errors=None, buffering=None, tbs=None, **kwargs):
+    ld = Loadumper(tbs)
+    return ld.loadump(obj=obj, dump_mode=DumpMode.WRITE,
+                   encoding=encoding, errors=errors, buffering=buffering, tbs=None, **kwargs)
+
+def adumps(obj, *, encoding=None, errors=None, buffering=None, tbs=None, **kwargs):
+    ld = Loadumper(tbs)
+    return ld.loadump(obj=obj, dump_mode=DumpMode.APPEND,
                    encoding=encoding, errors=errors, buffering=buffering, **kwargs)
 
-def adumps(obj, *, encoding=None, errors=None, buffering=None, **kwargs):
-    return loadump(obj=obj, dump_mode=DumpMode.APPEND,
-                   encoding=encoding, errors=errors, buffering=buffering, **kwargs)
-
-def xdumps(obj, *, encoding=None, errors=None, buffering=None, **kwargs):
-    return loadump(obj=obj, dump_mode=DumpMode.EXCLUSIVE_CREATION,
+def xdumps(obj, *, encoding=None, errors=None, buffering=None, tbs=None, **kwargs):
+    ld = Loadumper(tbs)
+    return ld.loadump(obj=obj, dump_mode=DumpMode.EXCLUSIVE_CREATION,
                    encoding=encoding, errors=errors, buffering=buffering, **kwargs)
