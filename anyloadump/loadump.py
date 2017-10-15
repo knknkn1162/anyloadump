@@ -51,11 +51,11 @@ class Loadumper():
             try:
                 out = io.StringIO()
                 return (not importlib.import_module(ext).dump(SAMPLE_OBJ, out)) or True
-            except TypeError:
+            except TypeError: # type(out) is actually io.BytesIO
                 return False
             except AttributeError:
                 raise CharsetNotInferredError(
-                    "{} module has no dumps method to analyze binary or text".format(ext)
+                    "{} module has no dump method to analyze binary or text".format(ext)
                 )
 
 
