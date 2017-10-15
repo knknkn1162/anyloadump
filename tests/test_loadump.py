@@ -28,7 +28,9 @@ class LoadumpTests(unittest.TestCase):
         res = ld._is_binary(self._get_path("data/dummy.pickle"))
         self.assertTrue(res)
 
-        with self.assertRaises(ModuleNotFoundError):
+        import sys
+        # ModuleNotFoundError is new in python3.6. otherwise assume to be raised ImportError
+        with self.assertRaises(ModuleNotFoundError if sys.version_info.minor>=6 else ImportError):
             ld._is_binary(self._get_path("data/dummy.dummy"))
 
         with self.assertRaises(loadump.CharsetNotInferredError):
