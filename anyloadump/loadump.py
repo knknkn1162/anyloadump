@@ -1,6 +1,6 @@
 from enum import Enum
 
-import subprocess, os, re, codecs
+import subprocess, os, re, codecs, io
 import logging, importlib
 
 logger = logging.getLogger(__name__)
@@ -49,11 +49,15 @@ class Loadumper():
         else: # if mode is write or append or exclusive creation.
             if ext == "": return False # assume text-mode.
             try:
-                return isinstance(importlib.import_module(ext).dumps(SAMPLE_OBJ), bytes)
+                out = io.StringIO()
+                return (not importlib.import_module(ext).dump(SAMPLE_OBJ, out)) or True
+            except TypeError:
+                return False
             except AttributeError:
                 raise CharsetNotInferredError(
                     "{} module has no dumps method to analyze binary or text".format(ext)
                 )
+
 
     @staticmethod
     def _extract_extension(file):
