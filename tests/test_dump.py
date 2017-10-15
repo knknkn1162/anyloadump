@@ -30,6 +30,20 @@ class DumpTests(unittest.TestCase):
 
 
     def test_dumps(self):
-        self.assertTrue(False)
+        import json, pickle
 
+        lst = [1,2,3]
+
+        # test json-format
+        s = dump.dumps(lst, fmt="json")
+        print(s)
+        ## confirm
+        obj = json.loads(s)
+        self.assertEqual(lst, obj)
+
+        # test pickle-format
+        s = dump.dumps(lst, "pickle")
+        ## confirm
+        obj = pickle.loads(s)
+        self.assertEqual(lst, obj)
 
