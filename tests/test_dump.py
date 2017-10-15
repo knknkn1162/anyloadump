@@ -36,7 +36,6 @@ class DumpTests(unittest.TestCase):
 
         # test json-format
         s = dump.dumps(lst, fmt="json")
-        print(s)
         ## confirm
         obj = json.loads(s)
         self.assertEqual(lst, obj)
@@ -47,3 +46,17 @@ class DumpTests(unittest.TestCase):
         obj = pickle.loads(s)
         self.assertEqual(lst, obj)
 
+
+    ## -----almost same as dump.dump method except for dump_mode -----#
+    def test_xdump(self):
+        pass
+
+    def test_adump(self):
+        pass
+
+    ## ------almost same as dump.dumps method except for dump_mode -----#
+    def test_xdumps(self):
+        pass
+
+    def test_adumps(self):
+        pass
