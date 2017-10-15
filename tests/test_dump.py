@@ -13,7 +13,7 @@ class DumpTests(unittest.TestCase):
         lst = [1,2,3]
 
         # test json-format
-        json_file = "data/out.json"
+        json_file = self._get_path("data/out.json")
         dump.dump(lst, self._get_path(json_file))
         ## confirm
         with open(json_file, "r") as fi:
@@ -21,7 +21,7 @@ class DumpTests(unittest.TestCase):
         self.assertEqual(lst, obj)
 
         # test pickle-format
-        pickle_file = "data/out.pickle"
+        pickle_file = self._get_path("data/out.pickle")
 
         dump.dump(lst, self._get_path(pickle_file))
         with open(pickle_file, "rb") as fi:
