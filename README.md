@@ -94,7 +94,7 @@ Anyloadump makes use of the art of duck typing to modules, so the imported modul
 1. `load(fp, **kwargs)` # fp : file object.
 2. `dump(obj, fp, **kwargs)` # obj : Python object, fp : file object
 3. (Optional) `loads(s, **kwargs)` # serialized bytes or strs
-4, (Optional) `dumps(obj, **kwargs)` # obj : Python object
+4. (Optional) `dumps(obj, **kwargs)` # obj : Python object
 
 Note that argument names (obj, fp) are arbitrary.
 
