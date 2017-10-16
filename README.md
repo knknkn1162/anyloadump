@@ -11,6 +11,7 @@ The Python library anyloadump helps to load a file or to dump to a file briefly 
 If the multiple types of file are loaded or dumped, boilerplate code will be generated and scattered as follows:
 
 ```python
+# import each module.
 import json, pickle
 with open(json_file, "r") as f:
   json_obj = json.load(f)
@@ -25,6 +26,7 @@ with open(pickle_file, "rb") as f:
 This code goes against DRY(Don't repeat yourself) principle. Let's apply DRY in the problem.
 
  ```python
+ # import json, pickle,... <= unnecessary expression because of dynamic importing
  # what we want to do
  def generalized_load(file):
   with open(file, get_mode()) as fp:
