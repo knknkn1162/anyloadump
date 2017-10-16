@@ -18,7 +18,19 @@ class LoadumpTests(unittest.TestCase):
 
         for module in ["anyloadump.loadump", "tests.test_loadump"]:
             logging.getLogger(module).setLevel(logging.DEBUG)
+
         ld = Loadumper()
+        res = ld._is_binary(self._get_path("data/sample.json"))
+        self.assertFalse(res)
+
+        res = ld._is_binary(self._get_path("data/sample.pickle"))
+        self.assertTrue(res)
+
+        res = ld._is_binary(self._get_path("data/dummy.pickle"))
+        self.assertTrue(res)
+
+        # assume that tb_mapping doesn't support json or pickle.
+        ld = Loadumper({"json": None, "pickle": None})
         res = ld._is_binary(self._get_path("data/sample.json"))
         self.assertFalse(res)
 
