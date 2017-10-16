@@ -43,6 +43,7 @@ class Loadumper():
         if os.path.exists(filename):
             commands = ["file", "--mime", filename]
             stdout = subprocess.run(commands, stdout=subprocess.PIPE, check=True).stdout.decode('utf-8')
+            logger.debug("subprocess.run : {}".format(stdout))
             m = re.search("charset=(.*)", stdout)
             if m is None: raise CharsetNotInferredError(stdout)
             return True if m.group(1) == "binary" else False
@@ -50,9 +51,9 @@ class Loadumper():
             if ext == "": return False # assume text-mode.
             try:
                 out = io.StringIO()
-                return (not importlib.import_module(ext).dump(SAMPLE_OBJ, out)) or True
+                return (not importlib.import_module(ext).dump(SAMPLE_OBJ, out)) or False
             except TypeError: # type(out) is actually io.BytesIO
-                return False
+                return True
             except AttributeError:
                 raise CharsetNotInferredError(
                     "{} module has no dump method to analyze binary or text".format(ext)
