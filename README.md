@@ -83,7 +83,7 @@ ald.dump(obj, json_file)
 
 # binary file can be also loaded properly. 
 pickle_file = "sample.pickle"
-ald.load(obj, pickle_file)
+ald.dump(obj, pickle_file)
 
 # when use loads/dumps, fmt argument is required
 ald.dumps(obj, fmt="json")
