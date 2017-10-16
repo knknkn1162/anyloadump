@@ -96,9 +96,11 @@ Anyloadump makes use of the art of duck typing to modules, so the imported modul
 3. (Optional) `loads(s, **kwargs)` # serialized bytes or strs
 4. (Optional) `dumps(obj, **kwargs)` # obj : Python object
 
-Note that argument names (obj, fp) are arbitrary.
+Note)
+1. argument names (obj, fp) are arbitrary.
+2. kwargs are the keyword arguments that are optional arguments of load/dump/loads/dumps method.
 
-For instance, `json, pickle, toml` modules have 1\~4 respectively. By contrast `pyyaml` library has only 1\~2.
+Check it out that `json, pickle, toml` modules have 1\~4 respectively, by contrast `pyyaml` library only 1\~2.
 If you run `anyloadump.loads("sample.yaml")`, CharsetNotInferredError is raised. 
 
 
