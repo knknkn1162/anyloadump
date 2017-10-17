@@ -76,7 +76,7 @@ obj = ald.load(yaml_file, default_flow_style=False, allow_unicode=True)
 
 # ---
 
-# obj = ...
+obj = get_obj()
 # Of course, you can use dump method likewise:
 json_file = "sample.json"
 ald.dump(obj, json_file)
@@ -91,7 +91,7 @@ ald.dumps(obj, fmt="json")
 
 ## Requirements
 
-Anyloadump makes use of the art of duck typing to modules, so the imported module meets a few requirements and options:
+Anyloadump makes use of the art of duck typing to modules, and the imported module meets a few requirements and options:
 
 1. `load(fp, **kwargs)` # fp : file object.
 2. `dump(obj, fp, **kwargs)` # obj : Python object, fp : file object
