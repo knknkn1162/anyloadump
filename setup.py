@@ -12,7 +12,7 @@ def my_test_suite():
     return test_suite
 
 setup(name='anyloadump',
-      version='0.1.dev0',
+      version='0.1',
       description='dumper and loader for various file formats.',
       long_description=long_description,
       classifiers=[
