@@ -84,7 +84,7 @@ obj = get_obj()
 json_file = "sample.json"
 ald.dump(obj, json_file)
 
-# binary file can be also loaded properly. 
+# binary file can be also dumped properly. 
 pickle_file = "sample.pickle"
 ald.dump(obj, pickle_file)
 
