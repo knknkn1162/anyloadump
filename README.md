@@ -1,8 +1,11 @@
 # Anyloadump
 
-[![Build Status](https://travis-ci.org/knknkn1162/anyloadump.svg?branch=dev)](https://travis-ci.org/knknkn1162/anyloadump)
-[![Coverage Status](https://coveralls.io/repos/github/knknkn1162/anyloadump/badge.svg?branch=dev)](https://coveralls.io/github/knknkn1162/anyloadump?branch=dev)
+[![PyPI](https://img.shields.io/pypi/pyversions/anyloadump.svg)]()
+[![PyPI](https://img.shields.io/pypi/v/anyloadump.svg)]()
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
+
+[![Build Status](https://travis-ci.org/knknkn1162/anyloadump.svg?branch=master)](https://travis-ci.org/knknkn1162/anyloadump)
+[![Coverage Status](https://coveralls.io/repos/github/knknkn1162/anyloadump/badge.svg?branch=master)](https://coveralls.io/github/knknkn1162/anyloadump?branch=master)
 
 The Python library anyloadump helps to load a file or to dump to a file briefly in various file formats (e.g. json, pickle, yaml, toml..) with importing modules dynamically.
 
