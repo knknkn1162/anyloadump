@@ -90,7 +90,7 @@ class Loadumper():
                 logger.warning("`obj` & `s` are both not-None, so `s` is forced to set None")
                 s=None
         if filename is None:
-            logger.info("open_mode : {}, fmt : {} (file : None)", open_mode.value, fmt)
+            logger.info("open_mode : {}, fmt : {} (file : None)".format(open_mode.value, fmt))
             return self._invoke(open_mode=open_mode, fmt=fmt)(obj or s, **kwargs)
         else:
             mode = open_mode.value + "b"*self._is_binary(filename)
@@ -99,6 +99,6 @@ class Loadumper():
                     if v is not None}
             with codecs.open(filename=filename, **codecs_kwargs) as fp:
                 args = (fp,) if open_mode == OpenMode.READ else (obj, fp)
-                logger.info("open_mode : {}, filename : {}", open_mode.value, filename)
+                logger.info("open_mode : {}, filename : {}".format(open_mode.value, filename))
                 return self._invoke(open_mode=open_mode, filename=filename, fmt=fmt)(*args, **kwargs)
 
