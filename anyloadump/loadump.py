@@ -103,6 +103,8 @@ class Loadumper():
             except FileNotFoundError:
                 if _retry or os.path.exists(os.path.dirname(filename)):
                     raise
+                if open_mode == OpenMode.READ:
+                    raise
                 os.makedirs(os.path.dirname(filename), exist_ok=True)
                 return self.loadump(
                     open_mode,
