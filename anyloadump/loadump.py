@@ -83,7 +83,7 @@ class Loadumper():
     generalized [load|dump]s? function
     """
     def loadump(self, open_mode: OpenMode, *,
-                obj=None, s=None, filename=None, fmt=None, encoding=None, errors=None, buffering=None, **kwargs):
+                obj=None, s=None, filename=None, fmt=None, encoding=None, errors=None, buffering=None, _retry=False, **kwargs):
         # load method precedes loads
         if obj is not None:
             if s is not None:
@@ -96,7 +96,24 @@ class Loadumper():
             codecs_kwargs = \
                 {k:v for k,v in dict(mode=mode, encoding=encoding, errors=errors, buffering=buffering).items() \
                     if v is not None}
-            with codecs.open(filename=filename, **codecs_kwargs) as fp:
-                args = (fp,) if open_mode == OpenMode.READ else (obj, fp)
-                return self._invoke(open_mode=open_mode, filename=filename, fmt=fmt)(*args, **kwargs)
-
+            try:
+                with codecs.open(filename=filename, **codecs_kwargs) as fp:
+                    args = (fp,) if open_mode == OpenMode.READ else (obj, fp)
+                    return self._invoke(open_mode=open_mode, filename=filename, fmt=fmt)(*args, **kwargs)
+            except FileNotFoundError:
+                if _retry or os.path.exists(os.path.dirname(filename)):
+                    raise
+                if open_mode == OpenMode.READ:
+                    raise
+                os.makedirs(os.path.dirname(filename), exist_ok=True)
+                return self.loadump(
+                    open_mode,
+                    obj=obj,
+                    s=s,
+                    filename=filename,
+                    fmt=fmt,
+                    encoding=encoding,
+                    errors=errors,
+                    buffering=buffering,
+                    _retry=True, **kwargs
+                )

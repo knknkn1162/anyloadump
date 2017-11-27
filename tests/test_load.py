@@ -47,3 +47,14 @@ class LoadTests(unittest.TestCase):
         b = pickle.dumps(sample)
         res = ald.loads(b, fmt="pickle")
         self.assertEqual(res, sample)
+
+
+class NonExistendPathLoadTests(unittest.TestCase):
+    def test_dump_directory_is_notfound_when_created(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmpdir:
+            storedir = os.path.join(tmpdir, "store")
+            self.assertFalse(os.path.exists(storedir))
+
+            with self.assertRaises(FileNotFoundError):
+                ald.load(os.path.join(storedir, "data.json"))

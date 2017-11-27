@@ -60,3 +60,18 @@ class DumpTests(unittest.TestCase):
 
     def test_adumps(self):
         pass
+
+
+class NonExistendPathDumpTests(unittest.TestCase):
+    def test_dump_directory_is_notfound_when_created(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmpdir:
+            storedir = os.path.join(tmpdir, "store")
+            self.assertFalse(os.path.exists(storedir))
+
+            data = {"x": 1}
+            ald.dump(data, os.path.join(storedir, "data.json"))
+
+            self.assertTrue(os.path.exists(storedir))
+            loaded = ald.load(os.path.join(storedir, "data.json"))
+            self.assertEqual(data, loaded)
